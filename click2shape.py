@@ -16,8 +16,9 @@ from rasterio.windows import from_bounds
 from rasterio.plot import plotting_extent
 import geopandas as gpd
 import os
+from scipy.signal import savgol_filter
 
-def click2shape(tif_path, extent=None, cmap='terrain', flood_threshold=30):
+def click2shape(tif_path, extent=None, cmap='terrain', flood_threshold=10, smoothing_factor=None):
     """
     Interactive shapefile creation using region-growing with connectivity.
 
@@ -79,14 +80,25 @@ def click2shape(tif_path, extent=None, cmap='terrain', flood_threshold=30):
             return
 
         contour = max(contours, key=len)
-        poly_coords = [(lon_min + col * pixel_width,lat_max - row * pixel_height)
-            for row, col in contour]
+        contour = np.array(contour)
+        if smoothing_factor is not None: # Smooth edges (optional)
+            if len(contour) >= 7:  # Ensure enough points for smoothing
+                smoothed_rows = savgol_filter(contour[:, 0], window_length=smoothing_factor, polyorder=2)
+                smoothed_cols = savgol_filter(contour[:, 1], window_length=smoothing_factor, polyorder=2)
+                contour = np.column_stack((smoothed_rows, smoothed_cols))
+        
+            poly_coords = [
+                (lon_min + col * pixel_width, lat_max - row * pixel_height)
+                for row, col in contour]
+        else:
+            
+            poly_coords = [(lon_min + col * pixel_width,lat_max - row * pixel_height)
+                for row, col in contour]
         poly = Polygon(poly_coords)
-
-        # PLot polygod
+       
+        # Plot polygon
         ax.fill(*poly.exterior.xy, facecolor='red', alpha=0.3, edgecolor='red', linewidth=2)
         fig.canvas.draw()
-
         # Save
         gdf = gpd.GeoDataFrame({'geometry': [poly]}, crs='EPSG:4326')
         gdf.to_file(shapefile_path)
@@ -96,4 +108,5 @@ def click2shape(tif_path, extent=None, cmap='terrain', flood_threshold=30):
     plt.show()
 
 # Example    
-click2shape('/Users/gerard/Desktop/Bolshoye Space/Lake Bolshoye Shchuchye.tif', extent=[66.2,67.8,66.4,67.95])
+fp = '/Path/to/geotif/'
+click2shape(fp, extent=["lon_min", "lat_min", "lon_max", "lat_max"])
