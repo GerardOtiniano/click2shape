@@ -2,7 +2,6 @@
 Script for creating a shapefile from a georeferenced map.
     • Create map in QGIS - set projection to use proper coordinate system (e.g., EPSG:4326)
     • Set extent of map use as arugment (optional)
-    • Set whether or not to ignore the colour black (e.g., text on map)
     • Run code
     • Click feature of interest (feature is selected by colour similarity between pixels)
     • Shapefile of feature is saved to folder where map is located
@@ -18,14 +17,13 @@ from rasterio.plot import plotting_extent
 import geopandas as gpd
 import os
 
-def click2shape(tif_path, extent=None, ignore_black=False, cmap='terrain', flood_threshold=30):
+def click2shape(tif_path, extent=None, cmap='terrain', flood_threshold=30):
     """
     Interactive shapefile creation using region-growing with connectivity.
 
     Parameters:
     - tif_path (str): Path to .tif image
     - extent (list): [lon_min, lat_min, lon_max, lat_max] to crop GeoTIFF
-    - ignore_black (bool): If True, black pixels will be ignored
     - cmap (str): Colormap for display
     """
     with rasterio.open(tif_path) as src:
@@ -73,9 +71,6 @@ def click2shape(tif_path, extent=None, ignore_black=False, cmap='terrain', flood
 
         # ML selection
         seed_val = img[y, x]
-        if ignore_black and seed_val == 0:
-            print("Seed pixel is black and ignore_black=True. Try again.")
-            return
         threshold = flood_threshold
         mask = flood(img, seed_point=(y, x), tolerance=threshold)
         contours = measure.find_contours(mask, level=0.5)
@@ -101,4 +96,4 @@ def click2shape(tif_path, extent=None, ignore_black=False, cmap='terrain', flood
     plt.show()
 
 # Example    
-click2shape('/Users/gerard/Desktop/Bolshoye Space/Lake Bolshoye Shchuchye.tif', ignore_black=False,extent=[66.2,67.8,66.4,67.95])
+click2shape('/Users/gerard/Desktop/Bolshoye Space/Lake Bolshoye Shchuchye.tif', extent=[66.2,67.8,66.4,67.95])

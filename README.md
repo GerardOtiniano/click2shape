@@ -1,12 +1,12 @@
-# shapepick
+# click2shape
 
-**shapepick** is a lightweight tool for interactively extracting shapefiles from georeferenced raster maps using a region-growing algorithm. The tool is designed for researchers working with mapped features (e.g., lakes) that can be visually separated from surrounding elements based on pixel intensity. The output is a `.shp` file of the selected feature boundary saved alongside the input GeoTIFF.
+**click2shape** is a lightweight tool for interactively extracting shapefiles from georeferenced raster maps using a region-growing algorithm. The tool is designed for researchers working with mapped features (e.g., lakes) that can be visually separated from surrounding elements based on pixel intensity. The output is a `.shp` file of the selected feature boundary saved alongside the input GeoTIFF.
 
 This tool is ideal for semi-automated digitization of surface features in spatially referenced imagery.
 
 ---
 
-## 🔧 Overview
+## Overview
 
 This script enables users to:
 - Load a georeferenced `.tif` image (e.g., exported from QGIS)
@@ -17,18 +17,15 @@ This script enables users to:
 
 ---
 
-## 🚀 Quickstart
+## Quickstart
 
-```python
-from shapepick import create_shapefile
+```
 
-create_shapefile(
+click2shape(
     tif_path='/path/to/your/map.tif',
     extent=[lon_min, lat_min, lon_max, lat_max],  # Optional
-    ignore_black=True,
     cmap='terrain',
-    flood_threshold=30
-)
+    flood_threshold=30)
 ```
 
 Then:
@@ -37,9 +34,9 @@ Then:
 
 ---
 
-## 🗺 Creating a GeoTIFF with QGIS
+## Creating a GeoTIFF with QGIS
 
-Before using `shapepick`, you'll need a properly georeferenced image:
+Before using `click2shape`, you'll need a properly georeferenced image:
 
 1. **Open your vector or raster base data in QGIS**.
 2. Add any visual layers you'd like (e.g., basemaps, vector overlays).
@@ -49,7 +46,7 @@ Before using `shapepick`, you'll need a properly georeferenced image:
    - Enable *'Use World File'* (this is essential for georeferencing).
    - Set the resolution appropriately (e.g., 300 dpi).
    - Save the output as a `.tif`.
-6. Your exported GeoTIFF can now be passed directly to the `create_shapefile()` function.
+6. Your exported GeoTIFF can now be passed directly to the `click2shape()` function.
 
 ---
 
@@ -66,23 +63,22 @@ Compared to a clustering or GMM approach, this region-growing method offers grea
 
 ---
 
-## 🛠 Function Arguments
+## Function Arguments
 
 ```python
-create_shapefile(tif_path, extent=None, ignore_black=False, cmap='terrain', flood_threshold=30)
+click2shape(tif_path, extent=None, cmap='terrain', flood_threshold=30)
 ```
 
 | Argument         | Description |
 |------------------|-------------|
 | `tif_path`       | Full path to the georeferenced `.tif` image |
 | `extent`         | Optional bounding box: `[lon_min, lat_min, lon_max, lat_max]` |
-| `ignore_black`   | If `True`, black pixels (0-value) are excluded from selection |
 | `cmap`           | Colormap used for visualization (e.g., `'gray'`, `'terrain'`, `'viridis'`) |
 | `flood_threshold`| Controls the intensity tolerance for pixel inclusion (higher = more pixels included) |
 
 ---
 
-## 📁 Output
+## Output
 
 - A shapefile with the same name as the `.tif`, stored in a new folder located in the same directory as the original image.
 - For example, if your input is:
@@ -96,17 +92,10 @@ create_shapefile(tif_path, extent=None, ignore_black=False, cmap='terrain', floo
 
 ---
 
-## ❗ Notes and Limitations
+## Notes and Limitations
 
 - Works best when features of interest are visually distinct (e.g., lake water vs land).
-- If the background contains black text or features, set `ignore_black=True` to prevent incorrect selection.
 - The tool is not yet optimized for multi-feature extraction or batch processing (though this could be added).
 
 ---
 
-## 📦 Future Features
-
-- Save multiple features from a single image
-- Export to GeoJSON or KML
-- Add GUI for non-interactive mode
-- Auto-detection using unsupervised clustering or active contour refinement
