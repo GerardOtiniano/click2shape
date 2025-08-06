@@ -1,3 +1,4 @@
+[![DOI](https://zenodo.org/badge/1032865269.svg)](https://doi.org/10.5281/zenodo.16749409)
 # click2shape
 
 **click2shape** is a lightweight tool for interactively extracting shapefiles from georeferenced raster maps using a region-growing algorithm. The tool is designed for researchers working with mapped features (e.g., lakes) that can be visually separated from surrounding elements based on pixel intensity. The output is a `.shp` file of the selected feature boundary saved alongside the input GeoTIFF.
