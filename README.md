@@ -50,7 +50,7 @@ Before using `click2shape`, you'll need a properly georeferenced image:
 
 ---
 
-## 🧠 How the feature extraction works
+## How the feature extraction works
 
 Once a user clicks on the map, the tool identifies the connected region surrounding the clicked pixel based on **pixel intensity similarity**. It uses the `skimage.segmentation.flood()` algorithm to implement a region-growing method with a tunable `tolerance` (passed as `flood_threshold`).
 
